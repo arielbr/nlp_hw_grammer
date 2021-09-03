@@ -94,7 +94,7 @@ class Grammar:
         """
         # Parse the input grammar file
         self.rules = {}
-        self.sum = dict() # added
+        self.sum_dict = {} # added
         self._load_rules_from_file(grammar_file)
 
     def _load_rules_from_file(self, grammar_file):
@@ -109,21 +109,15 @@ class Grammar:
                 if line[0] == '#' or line == "\n":
                     continue
                 elements = line.split("\t")
-                if elements[1] in sum.keys():
-                    sum[elements[1]] += int(elements[0])
+                if elements[1] in self.sum_dict.keys():
+                    self.sum_dict[elements[1]] += int(elements[0])
                 else:
-                    sum[elements[1]] = int(elements[0])
-
+                    self.sum_dict[elements[1]] = int(elements[0])
                 
-                if elements[1] in rules:
-                    rules[elements[1]].append(tuple(elements[2], elements[0]))
+                if elements[1] in self.rules:
+                    self.rules[elements[1]].append(tuple([elements[2], elements[0]]))
                 else:
-                    rules[elements[1]] = [tuple(elements[2], elements[0])]
-
-
-
-
-        # raise NotImplementedError
+                    self.rules[elements[1]] = [tuple([elements[2], elements[0]])]
 
     def sample(self, derivation_tree, max_expansions):
         """
