@@ -133,8 +133,11 @@ class Grammar:
         Returns:
             str: the random sentence or its derivation tree
         """
+        root_word = "ROOT"
+        choice_option = [element[0] for element in self.rules["ROOT"]]
+        print(choice_option)
         raise NotImplementedError
-
+        
 
 ####################
 ### Main Program
