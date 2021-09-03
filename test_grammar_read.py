@@ -7,7 +7,6 @@ Created on Fri Sep  3 12:51:32 2021
 
 import os
 
-
 os.chdir('nlp_hw_grammer')
 
 grammar_lines = []
