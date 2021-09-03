@@ -106,7 +106,9 @@ class Grammar:
         """
         with open(grammar_file) as grammar_file:
             for line in grammar_file:
-                if line[0] == '#' or line == "\n":
+                line = line.partition("#")[0]
+                line = line.strip()
+                if not line or line[0] == "#":
                     continue
                 elements = line.split("\t")
                 if elements[1] in self.sum_dict.keys():
@@ -114,10 +116,18 @@ class Grammar:
                 else:
                     self.sum_dict[elements[1]] = int(elements[0])
                 
+                # adding dash around non-terminals for quicker split later
+                words = elements[2].split(" ")
+                for i in range(len(words)):
+                    if not words[i].islower():
+                        words[i] = "-" + words[i] + "-"
+                elements[1] = " ".join(words)
                 if elements[1] in self.rules:
                     self.rules[elements[1]].append(tuple([elements[2], elements[0]]))
                 else:
                     self.rules[elements[1]] = [tuple([elements[2], elements[0]])]
+        print(self.sum_dict)
+        print(self.rules)
 
     def sample(self, derivation_tree, max_expansions):
         """
