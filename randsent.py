@@ -94,6 +94,7 @@ class Grammar:
         """
         # Parse the input grammar file
         self.rules = {}
+        self.nonterminals = set()
         self.sum_dict = {} # added
         self._load_rules_from_file(grammar_file)
 
@@ -104,8 +105,25 @@ class Grammar:
         Args:
             grammar_file (str): Path to the raw grammar file 
         """
-        with open(grammar_file) as grammar_file:
-            for line in grammar_file:
+        # get all the terminal symbols out:
+        left_hand_side = set()
+        right_hand_side = set()
+        with open(grammar_file) as grammar_file1:
+            for line in grammar_file1:
+                line = line.partition("#")[0]
+                line = line.strip()
+                if not line or line[0] == "#":
+                    continue
+                elements = line.split("\t")
+                left_hand_side.add(elements[1])
+                words = elements[2].split(" ")
+                right_hand_side.union(set(words))
+        for word in left_hand_side:
+            if word not in right_hand_side:
+                self.nonterminals.add(word)
+
+        with open(grammar_file) as grammar_file2:
+            for line in grammar_file2:
                 line = line.partition("#")[0]
                 line = line.strip()
                 if not line or line[0] == "#":
@@ -119,9 +137,9 @@ class Grammar:
                 # adding dash around non-terminals for quicker split later
                 words = elements[2].split(" ")
                 for i in range(len(words)):
-                    if not words[i].islower():
-                        words[i] = "-" + words[i] + "-"
-                elements[1] = " ".join(words)
+                    if words[i] in self.nonterminals:
+                        words[i] = "/" + words[i] + "/"
+                elements[2] = " ".join(words)
                 if elements[1] in self.rules:
                     self.rules[elements[1]].append(tuple([elements[2], elements[0]]))
                 else:
