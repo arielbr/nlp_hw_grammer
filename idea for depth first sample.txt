@@ -1,0 +1,33 @@
+		# there is a root word option in parse_args that we should use
+		# this will only get 1 sentence. add a loop on the outside to generate more
+		# Still have to work out best way to break if there aren't any "/"s left in the sentence.
+		# might be easier if we use a dict to store the rules, so we can do:
+	    #    weights=self.rules[root_word].keys() instead of a list comprehension
+		# might have to mess around to fix spacing when words are added to the sentence.
+		
+		root_word = "ROOT" # there is a root word option in parse_args
+        choice_options = [element[0] for element in self.rules[root_word]]
+        
+        # Note: random.choice can't use weights.
+        # Unsure if weights have to add to 1 for random.choices
+        sentence = random.choices(choice_option,
+            weights=[int(element[1]) for element in self.rules[root_word]],
+            k=1)[0]
+        
+		
+        num_iterations = 1
+        while num_iterations < self.max_expansions:
+            split_sentence = sentence.split("/")
+            choice_options = # similar to the root word version
+            split_sentence[1] = random.choices() # similar args to root word version
+			# break here if there aren't any /'s i.e. split_sentence[1] is out of bounds.
+            sentence = "/".join(split_sentence)
+            num_iterations += 1
+            if word.startswith('/') and word.endswith('/')
+        else:
+			sentence.append('...')
+			# also need to get rid of all the remaining  Noun, NP, VP etc sentence.split("/")[0] I guess?
+            
+            
+        raise NotImplementedError
+
