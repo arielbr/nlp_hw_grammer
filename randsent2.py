@@ -189,40 +189,43 @@ class Grammar:
         # depth-first expantion
         self.root = Node("ROOT") # starting node
         self.root.explored = True
-        self.traverse(self.root)
-        print(self.traverse_output)   
+        self.traverse(self.root , max_expansions)
+        print("Generated string: \n",self.traverse_output)   
     # recursive function to help traversing 
-    def traverse(self, node):
-        #pdb.set_trace()
-        if node.name in self.nonterminals:
-            self.traverse_output = self.traverse_output + "(" + node.name
-            choice_options = []
-            weights = []
-            for elements in self.rules[node.name].keys():
-                weights.append(self.rules[node.name][elements])
-                choice_options.append(elements)
-            sample = random.choices(choice_options, weights=weights, k=1)[0]
-            #print('sample:', sample)
-            #print(self.traverse_output)
-            sample = re.sub('[^\w\s]','', sample)
-            for child in sample.split(" "):
-                child = Node(child)
-                if child.name.strip('/') in self.nonterminals:
-                    child.name = child.name.strip('/')
-                    child.isterminal = False
-                    node.add_children(child)
-                    child.parent = node
-                    self.traverse(child) 
+    def traverse(self, node, max_expansions):
+        max_expansions -= 1
+        if max_expansions <= 0:
+            print(" ... ")
+        else: 
+            if node.name in self.nonterminals:
+                self.traverse_output = self.traverse_output + "(" + node.name +" "
+                choice_options = []
+                weights = []
+                for elements in self.rules[node.name].keys():
+                    weights.append(self.rules[node.name][elements])
+                    choice_options.append(elements)
+                sample = random.choices(choice_options, weights=weights, k=1)[0]
+                #print('sample:', sample)
+                #print(self.traverse_output)
+                sample = re.sub('[^\w\s]','', sample)
+                for child in sample.split(" "):
+                    child = Node(child)
+                    if child.name.strip('/') in self.nonterminals:
+                        child.name = child.name.strip('/')
+                        child.isterminal = False
+                        node.add_children(child)
+                        child.parent = node
+                        self.traverse(child, max_expansions) 
+                        
+                    else:
+                        child.isterminal = True
+                        node.add_children(child)
+                        child.parent = node
+                        self.traverse_output = self.traverse_output + " " +child.name + ")"
                     
-                else:
-                    child.isterminal = True
-                    node.add_children(child)
-                    child.parent = node
-                    self.traverse_output = self.traverse_output + " " +child.name + ")"
-                
-                
-        else:
-            self.traverse_output = self.traverse_output + " "+ child.name + ")"
+                    
+            else:
+                self.traverse_output = self.traverse_output + " "+ child.name + ")"
          
 
 
