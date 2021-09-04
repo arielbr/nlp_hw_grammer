@@ -141,9 +141,9 @@ class Grammar:
                         words[i] = "/" + words[i] + "/"
                 elements[2] = " ".join(words)
                 if elements[1] in self.rules:
-                    self.rules[elements[1]].append(tuple([elements[2], elements[0]]))
+                    self.rules[elements[1]].append(tuple([elements[2], int(elements[0])]))
                 else:
-                    self.rules[elements[1]] = [tuple([elements[2], elements[0]])]
+                    self.rules[elements[1]] = [tuple([elements[2], StopIteration(elements[0])])]
         print(self.sum_dict)
         print(self.rules)
 
