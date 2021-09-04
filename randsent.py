@@ -141,9 +141,14 @@ class Grammar:
                         words[i] = "/" + words[i] + "/"
                 elements[2] = " ".join(words)
                 if elements[1] in self.rules:
-                    self.rules[elements[1]].append(tuple([elements[2], int(elements[0])]))
+                    # for easier comparison later, each last element within a tuple represent total odds cumulatively
+                    # so instead of showing [(first_expansion, 1), (first_expansion, 2)], with total expansion odds = 3
+                    # self.rules[key] will show such a list: [(first_expansion, 1), (first_expansion, 1+2)]
+                    cumulative_freq = int(elements[0]) + self.rules[elements[1]][-1][-1]
+                    self.rules[elements[1]].append(tuple([elements[2], cumulative_freq]))
                 else:
-                    self.rules[elements[1]] = [tuple([elements[2], int(elements[0])])]
+                    cumulative_freq = int(elements[0])
+                    self.rules[elements[1]] = [tuple([elements[2], cumulative_freq])]
         print(self.sum_dict)
         print(self.rules)
 
