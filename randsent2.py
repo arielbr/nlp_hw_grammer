@@ -96,9 +96,8 @@ class Node(object):
             self.isterminal = False
             
 
-    def add_children(self,nodes):
-        for i in nodes:
-            self.children.append(i)
+    def add_children(self,node):
+            self.children.append(node)
         
 class Grammar:
     def __init__(self, grammar_file):
@@ -183,52 +182,45 @@ class Grammar:
         Returns:
             str: the random sentence or its derivation tree
         """
-        self.fully_explored = {}
-        self.parent = {}
-        self.traverse_output = []
+        self.traverse_output = ""
 
         # depth-first expantion
-        root = Node("ROOT") # starting node
-        root.explored = True
-        self.traverse(root)
-        # if not self.traverse_output:
-        #     # initialize nodes: not visited yet and no parent relation
-        #     for node in self.rules.keys():
-        #         self.parent[node] = None 
-        #         self.fully_explored[node] = False
-            
-        #     # sample a root node
-        #     self.traverse(node)
-        # else:
-        #     # sample a non root node
-        #     self.traverse(node)
-            
+        self.root = Node("ROOT") # starting node
+        self.root.explored = True
+        self.traverse(self.root)
+        print(self.traverse_output)   
     # recursive function to help traversing 
     def traverse(self, node):
-       # pdb.set_trace()
-        choice_options = []
-        weights = []
-        for child in self.rules[node.name].keys():
-            weights.append(self.rules[node.name][child])
-            child = Node(child)
-            child.parent = node
-            child.explored = True
-            if child.name[0] == '/' and child.name[-1] == '/': # check is the node is nonterminal
-                child.name = child.name.strip('/')
-                child.isterminal = False
-            elif child.name not in self.nonterminals:
-                child.isterminal = True
-            
-            choice_options.append(child.name)
-        sample = random.choices(choice_options, weights=weights, k=1)[0]
-        print('first sample:', sample)
-        # if  self.fully_explored[node] == False:
-        #     for i in self.node_dict[node]:
-        #         self.traverse_output.append(i)
-        #         self.parent[i] = node
-        # self.traverse(node)
+        #pdb.set_trace()
+        if node.name in self.nonterminals:
+            self.traverse_output = self.traverse_output + "(" + node.name
+            choice_options = []
+            weights = []
+            for elements in self.rules[node.name].keys():
+                weights.append(self.rules[node.name][elements])
+                choice_options.append(elements)
+            sample = random.choices(choice_options, weights=weights, k=1)[0]
+            #print('sample:', sample)
+            print(self.traverse_output) 
+            for child in elements.split(" "):
+                child = Node(child)
+                if child.name.strip('/') in self.nonterminals:
+                    child.name = child.name.strip('/')
+                    child.isterminal = False
+                    node.add_children(child)
+                    child.parent = node
+                    self.traverse(child) 
+                    
+                else:
+                    child.isterminal = True
+                    node.add_children(child)
+                    child.parent = node
+                    self.traverse_output = self.traverse_output + " " +child.name + ")"
                 
-        # raise NotImplementedError
+                
+        else:
+            self.traverse_output = self.traverse_output + " "+ child.name + ")"
+         
 
 
 
