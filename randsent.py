@@ -121,7 +121,7 @@ class Grammar:
                 for i in range(len(words)):
                     if not words[i].islower():
                         words[i] = "-" + words[i] + "-"
-                elements[1] = " ".join(words)
+                elements[2] = " ".join(words)
                 if elements[1] in self.rules:
                     self.rules[elements[1]].append(tuple([elements[2], elements[0]]))
                 else:
@@ -144,8 +144,23 @@ class Grammar:
             str: the random sentence or its derivation tree
         """
         root_word = "ROOT"
-        choice_option = [element[0] for element in self.rules["ROOT"]]
-        print(choice_option)
+        choice_option = [element[0] for element in self.rules[root_word]]
+        
+        # Note: random.choice can't use weights. Unsure if weights have to add to 1 If they don,'t, we don't need t keep track of self.sumd_dict
+        sentence = random.choices(choice_option,
+                       weights=[int(element[1]) for element in self.rules[root_word]],
+                       k=1)[0]
+        
+        # print(choice_option)
+        print(sentence)
+        num_iterations = 1
+        while num_iterations < self.max_expansions:
+            sentence.split()
+            
+            if word.startswith('/') and word.endswith('/')
+            
+            
+            
         raise NotImplementedError
         
 
