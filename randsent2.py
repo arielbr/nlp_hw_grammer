@@ -10,7 +10,6 @@ Re-modified by Alexandra DeLucia
 Code template written by Alexandra DeLucia,
 based on the submitted assignment with Keith Harrigian
 and Carlos Aguirre Fall 2019
-hello this is don
 """
 import os
 import sys
@@ -115,7 +114,7 @@ class Grammar:
         # Parse the input grammar file
         self.rules = {}
         self.nonterminals = set()
-        self.sum_dict = {} # added
+        self.sum_dict = {}
         self._load_rules_from_file(grammar_file)
 
     def _load_rules_from_file(self, grammar_file):
@@ -169,6 +168,7 @@ class Grammar:
                     self.rules[elements[1]] = {elements[2]: float(elements[0])}
         print(self.sum_dict)
         print(self.rules)
+        print(type(self.rules['ROOT']))
 
     def sample(self, derivation_tree, max_expansions):
         """

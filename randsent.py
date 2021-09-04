@@ -8,7 +8,6 @@ Re-modified by Alexandra DeLucia
 Code template written by Alexandra DeLucia,
 based on the submitted assignment with Keith Harrigian
 and Carlos Aguirre Fall 2019
-hello this is don
 """
 import os
 import sys
@@ -91,7 +90,7 @@ class Grammar:
         # Parse the input grammar file
         self.rules = {}
         self.nonterminals = set()
-        self.sum_dict = {} # added
+        self.sum_dict = {}
         self._load_rules_from_file(grammar_file)
 
     def _load_rules_from_file(self, grammar_file):
