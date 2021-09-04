@@ -17,6 +17,7 @@ import sys
 import random
 import argparse
 import pdb
+import re
 
 # Want to know what command-line arguments a program allows?
 # Commonly you can ask by passing it the --help option, like this:
@@ -82,6 +83,7 @@ def parse_args():
     return parser.parse_args()
 
 class Node(object):
+    
     def __init__(self,name):
         self.name = name
         
@@ -201,7 +203,8 @@ class Grammar:
                 choice_options.append(elements)
             sample = random.choices(choice_options, weights=weights, k=1)[0]
             #print('sample:', sample)
-            print(self.traverse_output) 
+            #print(self.traverse_output)
+            sample = re.sub('[^\w\s]','', sample)
             for child in sample.split(" "):
                 child = Node(child)
                 if child.name.strip('/') in self.nonterminals:
