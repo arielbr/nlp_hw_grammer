@@ -2,9 +2,11 @@
 """
 601.465/665 — Natural Language Processing
 Assignment 1: Designing Context-Free Grammars
+
 Assignment written by Jason Eisner
 Modified by Kevin Duh
 Re-modified by Alexandra DeLucia
+
 Code template written by Alexandra DeLucia,
 based on the submitted assignment with Keith Harrigian
 and Carlos Aguirre Fall 2019
@@ -14,6 +16,7 @@ import os
 import sys
 import random
 import argparse
+import pdb
 
 # Want to know what command-line arguments a program allows?
 # Commonly you can ask by passing it the --help option, like this:
@@ -31,6 +34,7 @@ import argparse
 def parse_args():
     """
     Parse command-line arguments.
+
     Returns:
         args (an argparse.Namespace): Stores command-line attributes
     """
@@ -77,11 +81,22 @@ def parse_args():
     )
     return parser.parse_args()
 
+class Node(object):
+    def __init__(self,terminal):
+        self.isroot = False
+        self.isterminal = False
+        self.parent = None
+        self.children = []
 
+    def add_children(self,nodes):
+        for i in nodes:
+            self.children.append(i)
+        
 class Grammar:
     def __init__(self, grammar_file):
         """
         Context-Free Grammar (CFG) Sentence Generator
+
         Args:
             grammar_file (str): Path to a .gr grammar file
         
@@ -97,6 +112,7 @@ class Grammar:
     def _load_rules_from_file(self, grammar_file):
         """
         Read grammar file and store its rules in self.rules
+
         Args:
             grammar_file (str): Path to the raw grammar file 
         """
@@ -116,15 +132,18 @@ class Grammar:
         for word in left_hand_side:
             if word not in right_hand_side:
                 self.nonterminals.add(word)
-
+        
         with open(grammar_file) as grammar_file2:
             for line in grammar_file2:
                 line = line.partition("#")[0]
                 line = line.strip()
                 if not line or line[0] == "#":
                     continue
+                #pdb.set_trace()
                 elements = line.split("\t")
+                 
                 if elements[1] in self.sum_dict.keys():
+                    # I think we should use counts here instead of adding probs
                     self.sum_dict[elements[1]] += int(elements[0])
                 else:
                     self.sum_dict[elements[1]] = int(elements[0])
@@ -136,20 +155,16 @@ class Grammar:
                         words[i] = "/" + words[i] + "/"
                 elements[2] = " ".join(words)
                 if elements[1] in self.rules:
-                    # for easier comparison later, each last element within a tuple represent total odds cumulatively
-                    # so instead of showing [(first_expansion, 1), (first_expansion, 2)], with total expansion odds = 3
-                    # self.rules[key] will show such a list: [(first_expansion, 1), (first_expansion, 1+2)]
-                    cumulative_freq = int(elements[0]) + self.rules[elements[1]][-1][-1]
-                    self.rules[elements[1]].append(tuple([elements[2], cumulative_freq]))
+                    self.rules[elements[1]].append({elements[2]:int(elements[0])})
                 else:
-                    cumulative_freq = int(elements[0])
-                    self.rules[elements[1]] = [tuple([elements[2], cumulative_freq])]
+                    self.rules[elements[1]] = [{elements[2]: int(elements[0])}]
         print(self.sum_dict)
         print(self.rules)
 
     def sample(self, derivation_tree, max_expansions):
         """
         Sample a random sentence from this grammar
+
         Args:
             derivation_tree (bool): if true, the returned string will represent 
                 the tree (using bracket notation) that records how the sentence 
@@ -160,7 +175,34 @@ class Grammar:
         Returns:
             str: the random sentence or its derivation tree
         """
+    #     self.fully_explored = {}
+    #     self.parent = {}
+    #     self.traverse_output = []
+
+    #     # depth-first expantion
+    #     root = "ROOT" # starting node
+    #     if not self.traverse_output:
+    #         # initialize nodes: not visited yet and no parent relation
+    #         for node in self.rules.keys():
+    #             self.parent[node] = None 
+    #             self.fully_explored[node] = False
+            
+    #         # sample a root node
+    #         self.traverse(node)
+    #     else:
+    #         # sample a non root node
+    #         self.traverse(node)
+            
+    # # recursive function to help traversing 
+    # def traverse(self, node):
+    #     if  self.fully_explored[node] == False:
+    #         for i in self.node_dict[node]:
+    #             self.traverse_output.append(i)
+    #             self.parent[i] = node
+    #     self.traverse(node)
+                
         raise NotImplementedError
+
 
 
 ####################
