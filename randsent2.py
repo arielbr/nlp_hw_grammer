@@ -82,7 +82,8 @@ def parse_args():
     return parser.parse_args()
 
 class Node(object):
-    def __init__(self,terminal):
+    def __init__(self,name):
+        self.name = name
         self.isroot = False
         self.isterminal = False
         self.parent = None
