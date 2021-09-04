@@ -207,7 +207,7 @@ class Grammar:
                 sample = random.choices(choice_options, weights=weights, k=1)[0]
                 #print('sample:', sample)
                 #print(self.traverse_output)
-                #sample = re.sub('[^\w\s]','', sample) # handling the punctuations
+                #sample = re.sub('[^\w\s]','', sample) # handling the punctuations if needed
                 for child in sample.split(" "):
                     child = Node(child)
                     if child.name.strip('/') in self.nonterminals:
