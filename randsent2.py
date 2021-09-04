@@ -202,7 +202,7 @@ class Grammar:
             sample = random.choices(choice_options, weights=weights, k=1)[0]
             #print('sample:', sample)
             print(self.traverse_output) 
-            for child in elements.split(" "):
+            for child in sample.split(" "):
                 child = Node(child)
                 if child.name.strip('/') in self.nonterminals:
                     child.name = child.name.strip('/')
