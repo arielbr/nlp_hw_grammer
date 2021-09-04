@@ -195,7 +195,7 @@ class Grammar:
     def traverse(self, node, max_expansions):
         max_expansions -= 1
         if max_expansions <= 0:
-            print(" ... ")
+            self.traverse_output = self.traverse_output + "..."+ ")"
         else: 
             if node.name in self.nonterminals:
                 self.traverse_output = self.traverse_output + "(" + node.name +" "
