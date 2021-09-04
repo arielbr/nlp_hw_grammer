@@ -84,10 +84,17 @@ def parse_args():
 class Node(object):
     def __init__(self,name):
         self.name = name
-        self.isroot = False
-        self.isterminal = False
+        
         self.parent = None
         self.children = []
+        self.explored = False
+        if self.name == 'ROOT':
+            self.isroot = True
+            self.isterminal = False
+        else:
+            self.isroot = False
+            self.isterminal = False
+            
 
     def add_children(self,nodes):
         for i in nodes:
@@ -153,12 +160,12 @@ class Grammar:
                 words = elements[2].split(" ")
                 for i in range(len(words)):
                     if words[i] in self.nonterminals:
-                        words[i] = "/" + words[i] + "/"
+                        words[i] = "/" + words[i] + "/"        
                 elements[2] = " ".join(words)
                 if elements[1] in self.rules:
-                    self.rules[elements[1]].append({elements[2]:int(elements[0])})
+                    self.rules[elements[1]][elements[2]] = float(elements[0])
                 else:
-                    self.rules[elements[1]] = [{elements[2]: int(elements[0])}]
+                    self.rules[elements[1]] = {elements[2]: float(elements[0])}
         print(self.sum_dict)
         print(self.rules)
 
@@ -176,33 +183,52 @@ class Grammar:
         Returns:
             str: the random sentence or its derivation tree
         """
-    #     self.fully_explored = {}
-    #     self.parent = {}
-    #     self.traverse_output = []
+        self.fully_explored = {}
+        self.parent = {}
+        self.traverse_output = []
 
-    #     # depth-first expantion
-    #     root = "ROOT" # starting node
-    #     if not self.traverse_output:
-    #         # initialize nodes: not visited yet and no parent relation
-    #         for node in self.rules.keys():
-    #             self.parent[node] = None 
-    #             self.fully_explored[node] = False
+        # depth-first expantion
+        root = Node("ROOT") # starting node
+        root.explored = True
+        self.traverse(root)
+        # if not self.traverse_output:
+        #     # initialize nodes: not visited yet and no parent relation
+        #     for node in self.rules.keys():
+        #         self.parent[node] = None 
+        #         self.fully_explored[node] = False
             
-    #         # sample a root node
-    #         self.traverse(node)
-    #     else:
-    #         # sample a non root node
-    #         self.traverse(node)
+        #     # sample a root node
+        #     self.traverse(node)
+        # else:
+        #     # sample a non root node
+        #     self.traverse(node)
             
-    # # recursive function to help traversing 
-    # def traverse(self, node):
-    #     if  self.fully_explored[node] == False:
-    #         for i in self.node_dict[node]:
-    #             self.traverse_output.append(i)
-    #             self.parent[i] = node
-    #     self.traverse(node)
+    # recursive function to help traversing 
+    def traverse(self, node):
+       # pdb.set_trace()
+        choice_options = []
+        weights = []
+        for child in self.rules[node.name].keys():
+            weights.append(self.rules[node.name][child])
+            child = Node(child)
+            child.parent = node
+            child.explored = True
+            if child.name[0] == '/' and child.name[-1] == '/': # check is the node is nonterminal
+                child.name = child.name.strip('/')
+                child.isterminal = False
+            elif child.name not in self.nonterminals:
+                child.isterminal = True
+            
+            choice_options.append(child.name)
+        sample = random.choices(choice_options, weights=weights, k=1)[0]
+        print('first sample:', sample)
+        # if  self.fully_explored[node] == False:
+        #     for i in self.node_dict[node]:
+        #         self.traverse_output.append(i)
+        #         self.parent[i] = node
+        # self.traverse(node)
                 
-        raise NotImplementedError
+        # raise NotImplementedError
 
 
 
