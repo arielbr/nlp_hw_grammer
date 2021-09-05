@@ -189,38 +189,35 @@ class Grammar:
         return self.traverse_output
 
     # recursive function to help traversing 
-    def traverse(self, node, max_expansions):
-        max_expansions -= 1
-        if max_expansions <= 0:
+    def traverse(self, node, remaining_expansions):
+        remaining_expansions -= 1
+        if remaining_expansions <= 0:
             self.traverse_output = self.traverse_output + "..."+ ") "
         else: 
-            if node.name in self.nonterminals:
-                self.traverse_output = self.traverse_output + "(" + node.name +" "
-                # select one expansion rule by relative odds
-                choice_options = []
-                weights = []
-                for elements in self.rules[node.name].keys():
-                    weights.append(self.rules[node.name][elements])
-                    choice_options.append(elements)
-                sample = random.choices(choice_options, weights=weights, k=1)[0]
+            self.traverse_output = self.traverse_output + "(" + node.name +" "
+            # select one expansion rule by relative odds
+            choice_options = []
+            weights = []
+            for elements in self.rules[node.name].keys():
+                weights.append(self.rules[node.name][elements])
+                choice_options.append(elements)
+            sample = random.choices(choice_options, weights=weights, k=1)[0]
 
-                for child in sample.split("/"):
-                    if child == "" or child == " ":
-                        continue
-                    child = child.strip(" ")
-                    child_node = Node(child)
-                    if child in self.nonterminals:
-                        child_node.isterminal = False
-                        node.add_children(child_node)
-                        child_node.parent = node
-                        self.traverse(child_node, max_expansions) 
-                    else:
-                        child_node.isterminal = True
-                        node.add_children(child_node)
-                        child_node.parent = node
-                        self.traverse_output = self.traverse_output + " " + child_node.name + ") "
-            else:
-                self.traverse_output = self.traverse_output + " " + child_node.name + ") "
+            for child in sample.split("/"):
+                if child == "" or child == " ":
+                    continue
+                child = child.strip(" ")
+                child_node = Node(child)
+                if child in self.nonterminals:
+                    child_node.isterminal = False
+                    node.add_children(child_node)
+                    child_node.parent = node
+                    self.traverse(child_node, remaining_expansions) 
+                else:
+                    child_node.isterminal = True
+                    node.add_children(child_node)
+                    child_node.parent = node
+                    self.traverse_output = self.traverse_output + child_node.name + ") "
          
 
 
