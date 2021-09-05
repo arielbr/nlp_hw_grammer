@@ -17,6 +17,7 @@ import random
 import argparse
 import pdb
 import re
+from collections import defaultdict
 
 # Want to know what command-line arguments a program allows?
 # Commonly you can ask by passing it the --help option, like this:
@@ -115,6 +116,7 @@ class Grammar:
         self.nonterminals = set()
         self.sum_dict = {}
         self._load_rules_from_file(grammar_file)
+        self.sampled_rules = defaultdict()
 
     def _load_rules_from_file(self, grammar_file):
         """
@@ -192,9 +194,11 @@ class Grammar:
     def traverse(self, node, remaining_expansions):
         remaining_expansions -= 1
         if remaining_expansions <= 0:
-            self.traverse_output = self.traverse_output + "..."+ ") "
+            self.traverse_output = self.traverse_output + "..." + ") "
         else: 
-            self.traverse_output = self.traverse_output + "(" + node.name +" "
+            if len(self.traverse_output) > 0 and self.traverse_output[-1] == ")":
+                self.traverse_output += " "
+            self.traverse_output = self.traverse_output + "(" + node.name + " "
             # select one expansion rule by relative odds
             choice_options = []
             weights = []
@@ -217,9 +221,11 @@ class Grammar:
                     child_node.isterminal = True
                     node.add_children(child_node)
                     child_node.parent = node
-                    self.traverse_output = self.traverse_output + child_node.name + ") "
-         
-
+                    if self.traverse_output[-1] == ")":
+                        self.traverse_output += " "
+                    self.traverse_output = self.traverse_output + child_node.name + ")"
+                    return
+            self.traverse_output += ")"
 
 
 ####################
