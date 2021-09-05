@@ -89,17 +89,16 @@ class Node(object):
         self.parent = None
         self.children = []
         self.explored = False
+        self.isterminal = False
         if self.name == 'ROOT':
             self.isroot = True
-            self.isterminal = False
         else:
             self.isroot = False
-            self.isterminal = False
             
-
     def add_children(self,node):
             self.children.append(node)
         
+
 class Grammar:
     def __init__(self, grammar_file):
         """
@@ -152,9 +151,9 @@ class Grammar:
                  
                 if elements[1] in self.sum_dict.keys():
                     # I think we should use counts here instead of adding probs
-                    self.sum_dict[elements[1]] += int(elements[0])
+                    self.sum_dict[elements[1]] += float(elements[0])
                 else:
-                    self.sum_dict[elements[1]] = int(elements[0])
+                    self.sum_dict[elements[1]] = float(elements[0])
                 
                 # adding dash around non-terminals for quicker split later
                 words = elements[2].split(" ")
@@ -166,9 +165,6 @@ class Grammar:
                     self.rules[elements[1]][elements[2]] = float(elements[0])
                 else:
                     self.rules[elements[1]] = {elements[2]: float(elements[0])}
-        print(self.sum_dict)
-        print(self.rules)
-        print(type(self.rules['ROOT']))
 
     def sample(self, derivation_tree, max_expansions):
         """
@@ -189,43 +185,42 @@ class Grammar:
         # depth-first expantion
         self.root = Node("ROOT") # starting node
         self.root.explored = True
-        self.traverse(self.root , max_expansions)
-        print("Generated string: \n",self.traverse_output)   
+        self.traverse(self.root, max_expansions)
+        return self.traverse_output
+
     # recursive function to help traversing 
     def traverse(self, node, max_expansions):
         max_expansions -= 1
         if max_expansions <= 0:
-            self.traverse_output = self.traverse_output + "..."+ ")"
+            self.traverse_output = self.traverse_output + "..."+ ") "
         else: 
             if node.name in self.nonterminals:
                 self.traverse_output = self.traverse_output + "(" + node.name +" "
+                # select one expansion rule by relative odds
                 choice_options = []
                 weights = []
                 for elements in self.rules[node.name].keys():
                     weights.append(self.rules[node.name][elements])
                     choice_options.append(elements)
                 sample = random.choices(choice_options, weights=weights, k=1)[0]
-                #print('sample:', sample)
-                #print(self.traverse_output)
-                #sample = re.sub('[^\w\s]','', sample) # handling the punctuations if needed
-                for child in sample.split(" "):
-                    child = Node(child)
-                    if child.name.strip('/') in self.nonterminals:
-                        child.name = child.name.strip('/')
-                        child.isterminal = False
-                        node.add_children(child)
-                        child.parent = node
-                        self.traverse(child, max_expansions) 
-                        
+
+                for child in sample.split("/"):
+                    if child == "" or child == " ":
+                        continue
+                    child = child.strip(" ")
+                    child_node = Node(child)
+                    if child in self.nonterminals:
+                        child_node.isterminal = False
+                        node.add_children(child_node)
+                        child_node.parent = node
+                        self.traverse(child_node, max_expansions) 
                     else:
-                        child.isterminal = True
-                        node.add_children(child)
-                        child.parent = node
-                        self.traverse_output = self.traverse_output + " " +child.name + ")"
-                    
-                    
+                        child_node.isterminal = True
+                        node.add_children(child_node)
+                        child_node.parent = node
+                        self.traverse_output = self.traverse_output + " " + child_node.name + ") "
             else:
-                self.traverse_output = self.traverse_output + " "+ child.name + ")"
+                self.traverse_output = self.traverse_output + " " + child_node.name + ") "
          
 
 
