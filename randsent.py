@@ -17,7 +17,6 @@ import random
 import argparse
 import pdb
 import re
-from collections import defaultdict
 
 # Want to know what command-line arguments a program allows?
 # Commonly you can ask by passing it the --help option, like this:
@@ -116,7 +115,6 @@ class Grammar:
         self.nonterminals = set()
         self.sum_dict = {}
         self._load_rules_from_file(grammar_file)
-        self.sampled_rules = defaultdict()
 
     def _load_rules_from_file(self, grammar_file):
         """
@@ -253,7 +251,8 @@ def main():
         # Print the sentence with the specified format.
         # If it's a tree, we'll pipe the output through the prettyprint script.
         if args.tree:
-            t = os.system(f"echo '{sentence}' | ./prettyprint")
+            prettyprint_path = os.path.join(os.getcwd(), 'prettyprint')
+            t = os.system(f"echo '{sentence}' | perl {prettyprint_path}")
         else:
             print(sentence)
 
