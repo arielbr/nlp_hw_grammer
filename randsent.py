@@ -191,44 +191,49 @@ class Grammar:
     # recursive function to help traversing 
     def traverse(self, node, remaining_expansions):
         remaining_expansions -= 1
-        if remaining_expansions <= 0:
-            self.traverse_output = self.traverse_output + "..." + ") "
-        else: 
-            if len(self.traverse_output) > 0 and self.traverse_output[-1] == ")":
-                self.traverse_output += " "
-            self.traverse_output = self.traverse_output + "(" + node.name + " "
-            # select one expansion rule by relative odds
-            choice_options = []
-            weights = []
-            for elements in self.rules[node.name].keys():
-                weights.append(self.rules[node.name][elements])
-                choice_options.append(elements)
-            sample = random.choices(choice_options, weights=weights, k=1)[0]
 
-            splitted = sample.split("/")
-            for i in range(len(splitted)):
-                child = splitted[i]
-                if child == "" or child == " ":
-                    continue
-                child = child.strip(" ")
-                child_node = Node(child)
-                if child in self.nonterminals:
-                    child_node.isterminal = False
-                    node.add_children(child_node)
-                    child_node.parent = node
-                    self.traverse(child_node, remaining_expansions) 
+        if len(self.traverse_output) > 0 and self.traverse_output[-1] == ")":
+            self.traverse_output += " "
+        self.traverse_output = self.traverse_output + "(" + node.name + " "
+        if remaining_expansions == 0:
+            self.traverse_output += "...) "
+            return
+
+        # select one expansion rule by relative odds
+        choice_options = []
+        weights = []
+        for elements in self.rules[node.name].keys():
+            weights.append(self.rules[node.name][elements])
+            choice_options.append(elements)
+        sample = random.choices(choice_options, weights=weights, k=1)[0]
+
+        splitted = sample.split("/")
+        for i in range(len(splitted)):
+            child = splitted[i]
+            if child == "" or child == " ":
+                continue
+            child = child.strip(" ")
+            child_node = Node(child)
+            if child in self.nonterminals:
+                child_node.isterminal = False
+                node.add_children(child_node)
+                child_node.parent = node
+                self.traverse(child_node, remaining_expansions)
+                if i == len(splitted) - 1:
+                    self.traverse_output = self.traverse_output + child_node.name + ")"
+                    return
+            else:
+                child_node.isterminal = True
+                node.add_children(child_node)
+                child_node.parent = node
+                if self.traverse_output[-1] == ")":
+                    self.traverse_output += " "
+                if i == len(splitted) - 1:
+                    self.traverse_output = self.traverse_output + child_node.name + ")"
+                    return
                 else:
-                    child_node.isterminal = True
-                    node.add_children(child_node)
-                    child_node.parent = node
-                    if self.traverse_output[-1] == ")":
-                        self.traverse_output += " "
-                    if i == len(splitted) - 1:
-                        self.traverse_output = self.traverse_output + child_node.name + ")"
-                        return
-                    else:
-                        self.traverse_output = self.traverse_output + child_node.name + " "
-            self.traverse_output += ")"
+                    self.traverse_output = self.traverse_output + child_node.name + " "
+        self.traverse_output += ")"
 
 
 ####################
