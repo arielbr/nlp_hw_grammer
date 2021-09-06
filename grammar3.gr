@@ -43,7 +43,7 @@
 5	NP	Det Noun
 1	NP	NP PP
 1	NP	NP NCP                      #3
-1	NP	SubConj S                      #3
+0.1	NP	SubConj S                      #3
 0.3	NP	NP ADVP                       #8 
 0.3	NP	Name
 1	PP	Prep NP
