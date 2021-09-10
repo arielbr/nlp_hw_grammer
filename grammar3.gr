@@ -36,10 +36,12 @@
 #    Adj = adjective
 
 1	S	NP VP
-1	S	NP Vi
 0.1	S	it VP SC
 5	VP	Vt NP
-1	VP	Vt SC                       #4
+1	VP	Vi SC                       #4
+1	VP	Vi
+0.1	VP	VP CVP
+1	CVP	Conj VP
 5	NP	Det Noun
 1	NP	NP PP
 1	NP	NP NCP                      #3
