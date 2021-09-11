@@ -181,12 +181,12 @@ class Grammar:
             str: the random sentence or its derivation tree
         """
         self.traverse_output = ""
-
+        self.output = ""
         # depth-first expantion
         self.root = Node("ROOT") # starting node
         self.root.explored = True
         self.traverse(self.root, max_expansions)
-        return self.traverse_output
+        return self.output
 
     # recursive function to help traversing 
     def traverse(self, node, remaining_expansions):
@@ -197,6 +197,7 @@ class Grammar:
         self.traverse_output = self.traverse_output + "(" + node.name + " "
         if remaining_expansions == 0:
             self.traverse_output += "...) "
+            self.output = self.output + "..." + " " 
             return
 
         # select one expansion rule by relative odds
@@ -224,6 +225,7 @@ class Grammar:
                     return
             else:
                 child_node.isterminal = True
+                self.output = self.output + child_node.name + " " 
                 node.add_children(child_node)
                 child_node.parent = node
                 if self.traverse_output[-1] == ")":
