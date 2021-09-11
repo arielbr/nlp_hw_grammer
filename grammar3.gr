@@ -77,16 +77,19 @@
 
 1	Vi	sighed
 2	Vi	thought
+2	Vi	worked
 
 2	Det	the
 2	Det	a
 1	Det	every
 
-2	Noun	president
+3	Noun	president
 2	Noun	sandwich
 1	Noun	pickle
 1	Noun	chief of staff
-3	Noun	floor
+2	Noun	floor
+2	Noun	proposal
+2	Noun	desk
 
 3	Adj	fine
 2	Adj	delicious
