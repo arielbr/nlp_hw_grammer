@@ -259,7 +259,7 @@ def main():
         # If it's a tree, we'll pipe the output through the prettyprint script.
         if args.tree:
             prettyprint_path = os.path.join(os.getcwd(), 'prettyprint')
-            t = os.system(f"echo '{sentence}' | perl \"{prettyprint_path}\"")
+            t = os.system(f"echo '{sentence}' | perl {prettyprint_path}")
         else:
             print(sentence)
 
