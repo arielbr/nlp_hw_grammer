@@ -40,6 +40,7 @@
 #    AdjV = Adjective begins with a vowel 
 
 1	S	NP VP
+2	SubjNP VP
 0.1	S	it VP SC
 5	VP	Vt NP
 1	VP	Vi SC                       #4
@@ -55,7 +56,7 @@
 0.1	NP	SubConj S                      #3
 0.3	NP	NP ADVP                       #8 
 0.3	NP	Name
-0.5	NP	NP , Appos
+1	NP	NP , Appos
 1	PP	Prep NP
 
 1	NCP	Conj NP
@@ -76,8 +77,11 @@
 1	VTCP	Conj Vt                 #3
 1	SC	SubConj S                   #4
 1	ADVP	Prep NP                   #8
-1	Appos	NP , Appos
-1	Appos	NP ,
+
+1	SubjNP	NP , Appos ,
+7	SubjNP	NP
+1	Appos	Appos , Appos
+1	Appos	Det Noun
 0.1	Appos	who VP
 0.1	Appos	which VP
 0.1	Appos	AdjC
@@ -125,6 +129,7 @@
 3	AdjC	fine
 2	AdjC	delicious
 2	AdjC	perplexed
+0.1	AdjC	59 years old
 1	AdjC	pickled
 2	AdjV	ambivalent
 2	AdjV	iconic
