@@ -81,7 +81,8 @@
 1	SubjNP	NP , Appos ,
 7	SubjNP	NP
 1	Appos	Appos , Appos
-1	Appos	Det Noun
+1	Appos	Det NounC
+1	Appos	Det NounV
 0.1	Appos	who VP
 0.1	Appos	which VP
 0.1	Appos	AdjC
