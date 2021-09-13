@@ -55,6 +55,7 @@
 0.1	NP	SubConj S                      #3
 0.3	NP	NP ADVP                       #8 
 0.3	NP	Name
+0.5	NP	NP , Appos ,
 1	PP	Prep NP
 
 1	NCP	Conj NP
@@ -75,6 +76,11 @@
 1	VTCP	Conj Vt                 #3
 1	SC	SubConj S                   #4
 1	ADVP	Prep NP                   #8
+1	Appos	Det Noun
+0.1	Appos	who VP
+0.1	Appos	which VP
+0.1	Appos	AdjC
+0.1	Appos	AdjV
 
 
 # Vocabulary.  Your program can see that "ate" is a terminal
@@ -123,7 +129,7 @@
 2	AdjV	iconic
 
 3	AdvC	very
-2	AdvC	alightly
+2	AdvC	slightly
 1	AdvV	immediately
 2	AdvC	almost
 3	AdvC	also
