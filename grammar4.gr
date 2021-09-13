@@ -76,7 +76,8 @@
 1	VTCP	Conj Vt                 #3
 1	SC	SubConj S                   #4
 1	ADVP	Prep NP                   #8
-1	Appos	Det Noun
+1	Appos	Appos , Appos ,
+1	Appos	NP
 0.1	Appos	who VP
 0.1	Appos	which VP
 0.1	Appos	AdjC
