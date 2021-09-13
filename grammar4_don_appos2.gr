@@ -44,14 +44,13 @@
 1	CVP	Conj VP
 1	SubjNP	NP , Appos ,		#Appos
 7	SubjNP	NP					#Appos
-5	NP	DNP						#Appos
-1	DNP	Det Noun				#Appos
+5	NP	Det Noun
 1	NP	NP PP
 1	NP	NP NCP                      #3
 0.1	NP	SubConj S                      #3
 0.3	NP	NP ADVP                       #8 
 0.3	NP	Name
-1	NP	NP , Appos
+1	NP	NP , Appos				#Appos
 1	PP	Prep NP
 
 1	NCP	Conj NP
@@ -114,5 +113,5 @@
 1	Appos	59 years old
 1	Appos	a renowned journalist
 1	Appos	my brother
-1	Appos	DNP
+1	Appos	Det Noun			# this rule is redundant, can merge it with NP>Det Noun by making DNP>Det Noun, NP>DNP
 0.1	Appos	who VP
