@@ -42,9 +42,10 @@
 1	VP	Vi
 0.1	VP	VP CVP
 1	CVP	Conj VP
-7	SubjNP	NP , Appos ,		#Appos
-1	SubjNP	NP					#Appos
-5	NP	Det Noun				#Appos
+1	SubjNP	NP , Appos ,		#Appos
+7	SubjNP	NP					#Appos
+5	NP	DNP						#Appos
+1	DNP	Det Noun				#Appos
 1	NP	NP PP
 1	NP	NP NCP                      #3
 0.1	NP	SubConj S                      #3
@@ -110,8 +111,8 @@
 1	Prep	under
 1	Prep	in
 
-#1	Appos	59 years old
-#1	Appos	a renowned journalist
-#1	Appos	my brother
-#0.5	Appos	NP
-1	Appos	who VP
+1	Appos	59 years old
+1	Appos	a renowned journalist
+1	Appos	my brother
+1	Appos	DNP
+0.1	Appos	who VP
