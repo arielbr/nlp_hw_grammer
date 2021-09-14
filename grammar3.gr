@@ -35,19 +35,23 @@
 #    Prep = preposition
 #    Adj = adjective
 
-1	S	NP VP
+1	S	SubjNP VP
 0.1	S	it VP SC
-5	VP	Vt NP
+5	VP	Vt ObjNP
 1	VP	Vi SC                       #4
 1	VP	Vi
 0.1	VP	VP CVP
 1	CVP	Conj VP
+1	SubjNP	SubConj S                      #3
+1	SubjNP	NP
 5	NP	Det Noun
 1	NP	NP PP
 1	NP	NP NCP                      #3
-0.1	NP	SubConj S                      #3
-0.3	NP	NP ADVP                       #8 
 0.3	NP	Name
+5	ObjNP	Det Noun
+1	ObjNP	NP PP
+1	ObjNP	NP NCP                      #3
+0.3	ObjNP	Name
 1	PP	Prep NP
 
 1	NCP	Conj NP
@@ -57,7 +61,6 @@
 1	Vt	Vi Prep                     #8
 1	VTCP	Conj Vt                 #3
 1	SC	SubConj S                   #4
-1	ADVP	Prep NP                   #8
 
 
 # Vocabulary.  Your program can see that "ate" is a terminal
