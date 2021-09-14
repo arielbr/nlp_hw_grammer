@@ -10,6 +10,11 @@ Re-modified by Alexandra DeLucia
 Code template written by Alexandra DeLucia,
 based on the submitted assignment with Keith Harrigian
 and Carlos Aguirre Fall 2019
+
+The code was completed by:
+	Amir Hussein
+	Ariel Bao
+	Donald Holloway
 """
 import os
 import sys
@@ -165,7 +170,7 @@ class Grammar:
                 else:
                     self.rules[elements[1]] = {elements[2]: float(elements[0])}
 
-    def sample(self, derivation_tree, max_expansions):
+    def sample(self, derivation_tree, max_expansions, start_symbol='ROOT'):
         """
         Sample a random sentence from this grammar
 
@@ -182,7 +187,7 @@ class Grammar:
         self.traverse_output = ""
         self.output = ""
         # depth-first expantion
-        self.root = Node("ROOT") # starting node
+        self.root = Node(start_symbol) # starting node
         self.root.explored = True
         self.traverse(self.root, max_expansions)
         return self.output, self.traverse_output
@@ -221,7 +226,6 @@ class Grammar:
                 self.traverse(child_node, remaining_expansions)
                 if i == len(splitted) - 1:
                     self.traverse_output = self.traverse_output + child_node.name + ")"
-                    return
             else:
                 child_node.isterminal = True
                 self.output = self.output + child_node.name + " " 
@@ -251,8 +255,7 @@ def main():
     for i in range(args.number_of_sentences):
         # Use Grammar object to generate sentence
         sentence, tree = grammar.sample(
-            derivation_tree=args.tree, max_expansions=args.max_expansions
-        )
+            derivation_tree=args.tree, max_expansions=args.max_expansions, start_symbol=args.start_symbol)
 
         # Print the sentence with the specified format.
         # If it's a tree, we'll pipe the output through the prettyprint script.
