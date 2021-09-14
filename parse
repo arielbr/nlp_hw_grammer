@@ -9,7 +9,8 @@
 # 2020-09-15, modified by Arya D. McCarthy to support the count semiring
 # 2020-09-17, modified by Jason Eisner to warn about unary-rule underestimates
 #    (and to clarify comments: underestimation does not only affect cyclic cases)
-
+# 2021-09-11, modified by Jason Eisner to fix a careless bug that was resulting in
+#    parse count of 0 (h/t Brian Lu) and clean up a few minor things
 
 # This script implements a probabilistic CKY parser.  It does the following:
 #
@@ -38,7 +39,8 @@
 #   only uses them as necessary to find the Viterbi parse.  This means that
 #   the unary rule closure for inside probabilities and counts *will* be
 #   underestimated in the cyclic case and *may* be underestimated in the
-#   acyclic case.  Potential underestimates are reported in the output.
+#   acyclic case.  Potential underestimates are reported in the output
+#   by printing inequality symbols.
 #
 # - This version of CKY does not handle epsilon rules (rules with empty
 #   right-hand sides).
@@ -86,53 +88,45 @@ $COUNT       = $opt_c;
 $PROBS       = $opt_P;
 $VERBOSE     = $opt_v;
 
-# Read grammar files.
-while ( $grammar = shift ) {
-    open( G, "<$grammar" );
+# Read grammar files, transforming long rules into multiple binary rules.
+while ( <> ) {
+    s/\#.*//;           # remove comments
+    next unless /\S/;   # skip blank lines
+    die "Bad rule: $_" unless ( $p, $lhs, $rhs ) = (m/^\s*(\S+)\s+(\S+)\s*(.*?)\s*$/);
+    die "invalid probability $p on line $. (must be positive)" unless $p > 0.0;
 
-    while (<G>) {
-        s/\#.*//;    # remove comments
-         #if(($lhs, $rhs, $p) = (m/^\s*(\S+)\s*\-\>\s*(\S.*)\s+(\S+)\s*$/)) { #old CFG format: LHS -> RHS1 RHS2 prob
-        if ( ( $p, $lhs, $rhs ) = (m/^\s*(\S+)\s+(\S+)\s*(\S.*)\s*$/) )
-        {    #new CFG format: prob LHS RHS1 RHS2
-
-            die "invalid probability $p on line $. (must be positive)"
-              if ( $p <= 0.0 );
-
-            @r = split /\s+/, $rhs;
-            foreach $s (@r) { $Symbol{$s} = 1; }
-            $Symbol{$lhs} = 1;
-            if ( scalar(@r) == 1 ) {
-                $Unary{ $r[0] }{$lhs} += $p;
-                $Tot{$lhs} += $p;
-            }
-            elsif ( scalar(@r) == 2 ) {
-                $Binary{ $r[0] }{ $r[1] }{$lhs} += $p;
-                $Tot{$lhs} += $p;
-            }
-            elsif ( scalar(@r) > 2 ) {
-                $x = $r[-2] . "#" . $r[-1];
-                $y = $r[-2];
-                $z = $r[-1];
-                for ( $i = scalar(@r) - 3 ; $i >= 0 ; --$i ) {
-                    $Binary{$y}{$z}{$x} += 1.0;
-                    $Tot{$x} += 1.0;
-                    $z = $x;
-                    $x = $r[$i] . "#" . $x;
-                    $y = $r[$i];
-                }
-                $Binary{$y}{$z}{$lhs} += $p;
-                $Tot{$lhs} += $p;
-            }
-            else {
-                die "bad rule:  $_";
-            }
-        }
+    @r = split /\s+/, $rhs;
+    foreach $s (@r) { $Symbol{$s} = 1; }
+    $Symbol{$lhs} = 1;
+    if ( scalar(@r) == 0) {
+      die "Rule with empty right-hand-side not currently supported: $_";
     }
-    close(G);
+    elsif ( scalar(@r) == 1 ) {
+	$Unary{ $r[0] }{$lhs} += $p;
+	$Tot{$lhs} += $p;
+    }
+    elsif ( scalar(@r) == 2 ) {
+	$Binary{ $r[0] }{ $r[1] }{$lhs} += $p;
+	$Tot{$lhs} += $p;
+    }
+    else {   # must binarize the rule
+	$x = $r[-2] . "#" . $r[-1];
+	$y = $r[-2];
+	$z = $r[-1];
+	for ( $i = scalar(@r) - 3 ; $i >= 0 ; --$i ) {
+	    $Binary{$y}{$z}{$x} += 1.0;
+	    $Tot{$x} += 1.0;
+	    $z = $x;
+	    $x = $r[$i] . "#" . $x;
+	    $y = $r[$i];
+	}
+	$Binary{$y}{$z}{$lhs} += $p;
+	$Tot{$lhs} += $p;
+    }
 }
 
-# Index rules.
+
+# Index the rules for quick lookup.
 foreach $y ( keys %Binary ) {
     foreach $x ( keys %{ $Binary{$y} } ) {
         foreach $z ( keys %{ $Binary{$y}{$x} } ) {
@@ -150,7 +144,7 @@ foreach $y ( keys %Unary ) {
     }
 }
 
-# Parse sentences.
+# Parse sentences from stdin.
 $logprob = 0;
 $logprob_underestimate = 0;
 $words   = 0;
@@ -159,42 +153,43 @@ while (<>) {
     %B = ();   # backpointer for Viterbi parse
     %I = ();   # log of inside probability
     %N = ();   # count of parses (computed in parallel to inside probability)
-    $underestimate = 0;   # set to 1 if we ever have unpropagated inside probability / counts
+    $underestimate = 0;  # will set to 1 if we ever have unpropagated inside probability / counts
     s/^\s*//;
-    s/\s*$//;    # Remove leading and trailing spaces.
+    s/\s*$//;            # Remove leading and trailing spaces from sentence.
     @W = split /\s+/;    # Convert sentence (string) to list of words (strings).
-    $n = scalar(@W);     # n is the number of words.
-    $words += $n;
+    $n = scalar(@W);     # n is the number of words
+    $words += $n;        # total number of words in corpus (for computing cross-entropy per word at the end)
 
-    for ( $i = 0 ; $i < $n ; ++$i ) {
+    for ( $i = 0 ; $i < $n ; ++$i ) {   # initialize chart with words
         $w = $W[$i];
         unless ( defined $Symbol{$w} ) {
             if ($OOV) {
                 $w = $OOV_symbol;
             }
             else {
-                print STDERR
-"warning: input word \"$w\" is not in the grammar (consider using -o)\n";
+                print STDERR "warning: input word \"$w\" is not in the grammar (consider using -o)\n";
             }
         }
         $C{$i}{ $i + 1 }{$w} = 0.0;  # Probability of the word is 1 (stored in log domain).
         $I{$i}{ $i + 1 }{$w} = 0.0;  # Inside probability of span is also 1 (stored in log domain).
         $N{$i}{ $i + 1 }{$w} = 1;    # Parse count of span is 1.
     }
-    for ( $l = 1 ; $l <= $n ; ++$l ) {
+    for ( $l = 1 ; $l <= $n ; ++$l ) {   # width l of constituents to build
 
-        for ( $i = 0 ; $i <= $n - $l ; ++$i ) {
-            $k = $i + $l;
-            for ( $j = $i + 1 ; $j < $k ; ++$j ) {  # For every (start i, midpoint j, end k)
-                foreach $Y ( keys %{ $C{$i}{$j} } ) {
+        for ( $i = 0 ; $i <= $n - $l ; ++$i ) {   # start position i
+            $k = $i + $l;                         # end position k
+
+	    # Build using binary rules.
+            for ( $j = $i + 1 ; $j < $k ; ++$j ) {  # midpoint j (with i < j < k)
+                foreach $Y ( keys %{ $C{$i}{$j} } ) {   # left subconstituent Y from i to j
                     $q  = $C{$i}{$j}{$Y};
                     $qI = $I{$i}{$j}{$Y};
                     $qN = $N{$i}{$j}{$Y};
-                    foreach $Z ( keys %{ $C{$j}{$k} } ) {
+                    foreach $Z ( keys %{ $C{$j}{$k} } ) {   # right subconstituent Z from j to k
                         $r  = $C{$j}{$k}{$Z};
                         $rI = $I{$j}{$k}{$Z};
                         $rN = $N{$j}{$k}{$Z};
-                        foreach $X ( keys %{ $Binary{$Y}{$Z} } ) {
+                        foreach $X ( keys %{ $Binary{$Y}{$Z} } ) {   # newly built constituent X from i to k
                             $p  = $Binary{$Y}{$Z}{$X} + $q + $r;
                             $pI = $Binary{$Y}{$Z}{$X} + $qI + $rI;
                             $pN = ($Binary{$Y}{$Z}{$X} != -inf) * $qN * $rN;
@@ -217,20 +212,21 @@ while (<>) {
             # Handle unary rules, only propagating as long as the Viterbi parse changes.
 	    # (It's inefficient to repeat this for every span ($i,$k) as we do here; almost
 	    # all of the work is position-independent, and should be factored out and memoized.)
+            %E       = ();
+            %EN      = ();
             do {
-                %E       = ();
-                %EN      = ();
                 $changes = 0;
                 foreach $Y ( keys %{ $I{$i}{$k} } ) {
 		    # nonterminals $Y with positive unpropagated inside probability over span ($i,$k)
                     $q  = $C{$i}{$k}{$Y};
                     $qI = $I{$i}{$k}{$Y};
                     $qN = $N{$i}{$k}{$Y};
-                    # move the mass $qI that we're about to propagate from $I to $E so we don't propagate it again
+                    # move $Y's inside mass that we're about to propagate from $I to $E so we won't propagate it again on the next loop
                     $E{$Y} = logadd( $E{$Y}, $qI );
                     $EN{$Y}= $EN{$Y} + $qN;
                     delete $I{$i}{$k}{$Y};
                     delete $N{$i}{$k}{$Y};
+		    # propagate from $Y to $X (the inside mass lands in $I so it can be propagated further on this loop or the next loop)
                     foreach $X ( keys %{ $Unary{$Y} } ) {
 		        # nonterminals $X with unary rule $X -> $Y in the grammar
                         $p  = $Unary{$Y}{$X} + $q;
@@ -252,12 +248,18 @@ while (<>) {
                     }
                 }
             } while ( $changes > 0 );
+
             foreach $Y ( keys %{ $I{$i}{$k} } ) {
-	        # We found a nonterminal $Y with unpropagated inside probability.
-	        # If $Y appears in the final parse forest (we don't currently check for this),
-	        # then the overall sentence probability and counts will be underestimates.
+	        # We found a nonterminal $Y that still has unpropagated inside probability
+	        # even now that the Viterbi parses have settled.
+	        # Thus, we'll commit now to warning that the final overall sentence
+	        # probability and counts may be underestimates (although they are
+  	        # only underestimates if some such $Y actually appears in the final
+	        # parse forest).
 	        $underestimate = 1;
-	    }
+	      }
+
+	    # Add all the propagated mass that we moved into $E back into $I.
             foreach $Y ( keys %E ) {
                 $I{$i}{$k}{$Y} = logadd( $I{$i}{$k}{$Y}, $E{$Y} );
                 $N{$i}{$k}{$Y} = $N{$i}{$k}{$Y} + $EN{$Y};
@@ -266,18 +268,21 @@ while (<>) {
     }
     if ( defined $C{0}{$n}{$ROOT_symbol} ) {
         print backtrace( 0, $n, $ROOT_symbol, 0 ), "\n";
-        if ( $COUNT ) {
-            print "# number of parses",
-	      $underestimate ? " >= " : " = ",
-	      $N{0}{$n}{$ROOT_symbol},
-	      $underestimate ? " (incomplete computation)\n" : "\n";
-        }
     }
     else {
         print "failure\n";
         $C{0}{$n}{$ROOT_symbol} = nan;
         $I{0}{$n}{$ROOT_symbol} = -inf;
+        $N{0}{$n}{$ROOT_symbol} = 0;
     }
+
+    if ( $COUNT ) {
+	print "# number of parses",
+	  $underestimate ? " >= " : " = ",
+	  $N{0}{$n}{$ROOT_symbol},
+	  $underestimate ? " (incomplete computation)\n" : "\n";
+    }
+
     if ($PROBS) {
         printf(
 	    $underestimate
