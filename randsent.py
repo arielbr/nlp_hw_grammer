@@ -123,7 +123,7 @@ class Grammar:
         Args:
             grammar_file (str): Path to the raw grammar file 
         """
-        # get all the terminal symbols out:
+        # get all the nonterminal symbols out:
         left_hand_side = set()
         right_hand_side = set()
         with open(grammar_file) as grammar_file1:
@@ -146,7 +146,6 @@ class Grammar:
                 line = line.strip()
                 if not line or line[0] == "#":
                     continue
-                #pdb.set_trace()
                 elements = line.split("\t")
                  
                 if elements[1] in self.sum_dict.keys():

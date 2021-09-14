@@ -42,7 +42,7 @@
 1	VP	Vi
 0.1	VP	VP CVP
 1	CVP	Conj VP
-1	SubjNP	SubConj S                      #3
+0.1	SubjNP	SubConj S                      #3
 1	SubjNP	NP
 5	NP	Det Noun
 1	NP	NP PP
