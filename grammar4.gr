@@ -39,22 +39,21 @@
 #    AdjC = Adjective begins with a consonant 
 #    AdjV = Adjective begins with a vowel 
 
-1	S	NP VP
-0.5	S	SubjNP VP
+1	S	SubjNP VP
 0.1	S	it VP SC
 5	VP	Vt NP
-1	VP	Vi SC                       #4
+1	VP	SentInit SC                       #4
 1	VP	Vi
 0.1	VP	VP CVP
 1	CVP	Conj VP
+1	SubjNP	SubConj S                      #3
+1	SubjNP	NP
 5	NP	DetC NounC
 5	NP	DetV NounV
 3	NP	DetG NounC
 3	NP	DetG NounV
 1	NP	NP PP
 1	NP	NP NCP                      #3
-0.1	NP	SubConj S                      #3
-0.3	NP	NP ADVP                       #8 
 0.3	NP	Name
 1	NP	NP , Appos
 1	PP	Prep NP
@@ -76,7 +75,6 @@
 1	Vt	Vi Prep                     #8
 1	VTCP	Conj Vt                 #3
 1	SC	SubConj S                   #4
-1	ADVP	Prep NP                   #8
 
 1	SubjNP	NP , Appos ,
 7	SubjNP	NP
@@ -107,8 +105,9 @@
 2	Vt	perplexed
 
 1	Vi	sighed
-2	Vi	thought
 2	Vi	worked
+
+2	SentInit	thought
 
 2	DetG	the
 2	DetC	a
