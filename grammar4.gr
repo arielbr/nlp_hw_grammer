@@ -40,7 +40,7 @@
 #    AdjV = Adjective begins with a vowel 
 
 1	S	NP VP
-2	S	SubjNP VP
+0.5	S	SubjNP VP
 0.1	S	it VP SC
 5	VP	Vt NP
 1	VP	Vi SC                       #4
