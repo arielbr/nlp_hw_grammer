@@ -186,7 +186,7 @@ class Grammar:
         self.root = Node("ROOT") # starting node
         self.root.explored = True
         self.traverse(self.root, max_expansions)
-        return self.output
+        return self.output, self.traverse_output
 
     # recursive function to help traversing 
     def traverse(self, node, remaining_expansions):
@@ -251,7 +251,7 @@ def main():
     # Generate sentences
     for i in range(args.number_of_sentences):
         # Use Grammar object to generate sentence
-        sentence = grammar.sample(
+        sentence, tree = grammar.sample(
             derivation_tree=args.tree, max_expansions=args.max_expansions
         )
 
@@ -259,7 +259,7 @@ def main():
         # If it's a tree, we'll pipe the output through the prettyprint script.
         if args.tree:
             prettyprint_path = os.path.join(os.getcwd(), 'prettyprint')
-            t = os.system(f"echo '{sentence}' | perl {prettyprint_path}")
+            t = os.system(f"echo '{tree}' | perl {prettyprint_path}")
         else:
             print(sentence)
 
