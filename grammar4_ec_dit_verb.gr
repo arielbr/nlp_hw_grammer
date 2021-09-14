@@ -42,7 +42,7 @@
 1	S	SubjNP VP
 0.1	S	it VP SC
 5	VP	Vt NP
-10	VP	Vdit NP NP
+3	VP	Vdit NP NP
 1	VP	SentInit SC                       #4
 1	VP	Vi
 0.1	VP	VP CVP
