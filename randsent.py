@@ -186,7 +186,7 @@ class Grammar:
         self.root = Node("ROOT") # starting node
         self.root.explored = True
         self.traverse(self.root, max_expansions)
-        return self.output
+        return self.traverse_output
 
     # recursive function to help traversing 
     def traverse(self, node, remaining_expansions):
