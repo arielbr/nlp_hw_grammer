@@ -45,9 +45,8 @@
 1	VP	SentInit SC                       #4
 1	VP	Vi
 0.1	VP	VP CVP
-4	VP	Vt_tobe AdjC
-4	VP	Vt_tobe AdjV
-4	VP	Vt_tobe AdjV
+1	VP	Vt_tobe AdjC
+1	VP	Vt_tobe AdjV
 1	CVP	Conj VP
 1	SubjNP	SubConj S                      #3
 1	SubjNP	NP
