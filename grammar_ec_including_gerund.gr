@@ -58,7 +58,7 @@
 1	NP	NP NCP                      #3
 0.3	NP	Name
 1	NP	NP , Appos
-1	NP	Vbing
+5	NP	Vbing
 1	PP	Prep NP
 
 1	NCP	Conj NP

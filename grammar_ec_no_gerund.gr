@@ -30,6 +30,14 @@
 #    S  = sentence
 #    NP = noun phrase
 #    VP = verb phrase
+#    CVP = conjunction verb phrase
+#    SubjNP = noun phrase that is the subject of the sentence
+#    SC = subordinating clause
+#    Vt = transitive verb
+#    Vi = intransitive verb
+#    Vdit = ditransitive verb
+#    Vtrit = tritransitive verb
+#    SentInit = sentence intial (special type of verb like thought, believed)
 #    PP = prepositional phrase
 #    DetC = determinant for words starting with a consonance ‘a’
 #    DetV = determinant for words starting with a vowel ‘an’
@@ -58,7 +66,6 @@
 1	NP	NP NCP                      #3
 0.3	NP	Name
 1	NP	NP , Appos
-5	NP	Vbing
 1	PP	Prep NP
 
 1	NCP	Conj NP
@@ -78,10 +85,6 @@
 1	Vt	Vi Prep                     #8
 1	VTCP	Conj Vt                 #3
 1	SC	SubConj S                   #4
-1	Vbing	Vi_ing
-1	Vbing	Vt_ing Obj        # Prevent going to Gerund again to have ‘fishing reading’
-1	Vt_ing	Vi_ing Prep
-1	Obj	Obj PP
 
 1	SubjNP	NP , Appos ,
 1	Appos	Appos , Appos
@@ -164,14 +167,3 @@
 1	Prep	on
 1	Prep	under
 1	Prep	in
-
-5	Obj	DetC NounC
-5	Obj	DetV NounV
-3	Obj	DetG NounC
-3	Obj	DetG NounV
-0.3	Obj	Name
-
-1	Vt_ing	eating
-1	Vt_ing	creating
-1	Vi_ing	flying
-1	Vi_ing	smiling
