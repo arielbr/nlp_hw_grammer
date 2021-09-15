@@ -1,6 +1,3 @@
-#TODO: Update all comments
-
-
 # Symbols in the grammar are case-sensitive.
 # 
 # This grammar uses a convention that
@@ -46,7 +43,7 @@
 1	VP	Vi
 0.1	VP	VP CVP
 1	CVP	Conj VP
-1	SubjNP	SubConj S                      #3
+0.1	SubjNP	SubConj S                      #3
 1	SubjNP	NP
 5	NP	DetC NounC
 5	NP	DetV NounV
