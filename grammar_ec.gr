@@ -30,6 +30,14 @@
 #    S  = sentence
 #    NP = noun phrase
 #    VP = verb phrase
+#    CVP = conjunction verb phrase
+#    SubjNP = noun phrase that is the subject of the sentence
+#    SC = subordinating clause
+#    Vt = transitive verb
+#    Vi = intransitive verb
+#    Vdit = ditransitive verb
+#    Vtrit = tritransitive verb
+#    SentInit = sentence intial (special type of verb like thought, believed)
 #    PP = prepositional phrase
 #    DetC = determinant for words starting with a consonance ‘a’
 #    DetV = determinant for words starting with a vowel ‘an’
