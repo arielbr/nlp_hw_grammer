@@ -56,18 +56,18 @@
 1	PP	Prep NP
 
 1	NCP	Conj NP
-5	NounC	AdjC NounC
-5	NounC	AdjC NounV
-5	NounV	AdjV NounC
-5	NounV	AdjV NounV
-5	AdjC	AdvC AdjC
-5	AdjC	AdvC AdjV
-5	AdjV	AdvV AdjC
-5	AdjV	AdvV AdjV
-5	AdvC	AdvC AdjC
-5	AdvC	AdvC AdjV
-5	AdvV	AdvV AdjC
-5	AdvV	AdvV AdjV
+0.5	NounC	AdjC NounC
+0.5	NounC	AdjC NounV
+0.5	NounV	AdjV NounC
+0.5	NounV	AdjV NounV
+0.5	AdjC	AdvC AdjC
+0.5	AdjC	AdvC AdjV
+0.5	AdjV	AdvV AdjC
+0.5	AdjV	AdvV AdjV
+0.5	AdvC	AdvC AdjC
+0.5	AdvC	AdvC AdjV
+0.5	AdvV	AdvV AdjC
+0.5	AdvV	AdvV AdjV
 1	Vt	Vt VTCP                     #3
 1	Vt	Vi Prep                     #8
 1	VTCP	Conj Vt                 #3
